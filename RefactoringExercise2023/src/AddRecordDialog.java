@@ -6,6 +6,7 @@
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -27,6 +28,10 @@ public class AddRecordDialog extends JDialog implements ActionListener {
 	JComboBox<String> genderCombo, departmentCombo, fullTimeCombo;
 	JButton save, cancel;
 	EmployeeDetails parent;
+	
+	//Singleton Pattern
+	private static AddRecordDialog instance = null;
+	
 	// constructor for add record dialog
 	public AddRecordDialog(EmployeeDetails parent) {
 		setTitle("Add Record");
@@ -43,7 +48,19 @@ public class AddRecordDialog extends JDialog implements ActionListener {
 		setSize(500, 370);
 		setLocation(350, 250);
 		setVisible(true);
+		
 	}// end AddRecordDialog
+	
+	// public static method to get instance of AddRecordDialog
+	public static AddRecordDialog getInstance(EmployeeDetails parent) {
+        if (instance == null) {
+            instance = new AddRecordDialog(parent);
+        }
+        return instance;
+    }
+	
+	//Now, to create an instance of the AddRecordDialog class, you would call the static method getInstance() instead of using the constructor
+	//AddRecordDialog dialog = AddRecordDialog.getInstance(parent);
 
 	// initialize dialog container
 	public Container dialogPane() {
@@ -57,7 +74,6 @@ public class AddRecordDialog extends JDialog implements ActionListener {
 		empDetails.add(new JLabel("ID:"), "growx, pushx");
 		empDetails.add(idField = new JTextField(20), "growx, pushx, wrap");
 		idField.setEditable(false);
-		
 
 		empDetails.add(new JLabel("PPS Number:"), "growx, pushx");
 		empDetails.add(ppsField = new JTextField(20), "growx, pushx, wrap");
