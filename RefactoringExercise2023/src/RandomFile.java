@@ -34,6 +34,7 @@ public class RandomFile {
 		try // open file
 		{
 			output = new RandomAccessFile(fileName, "rw");
+			output.seek(output.length());
 		} // end try
 		catch (IOException ioException) {
 			JOptionPane.showMessageDialog(null, "File does not exist!");
@@ -255,27 +256,21 @@ public class RandomFile {
 
 		return ppsExist;
 	}// end isPpsExist
-
+	
 	// Check if any record contains valid ID - greater than 0
 	public boolean isSomeoneToDisplay() {
-		boolean someoneToDisplay = false;
-		long currentByte = 0;
-		RandomAccessEmployeeRecord record = new RandomAccessEmployeeRecord();
-
-		try {// try to read from file and look for ID
-			// Start from start of file and loop until valid ID is found or search returned to start position
-			while (currentByte != input.length() && !someoneToDisplay) {
-				input.seek(currentByte);// Look for proper position in file
-				record.read(input);// Get record from file
-				// If valid ID exist in stop search
-				if (record.getEmployeeId() > 0)
-					someoneToDisplay = true;
-				currentByte = currentByte + RandomAccessEmployeeRecord.SIZE;
-			}// end while
-		}// end try
-		catch (IOException e) {
-		}// end catch
-
-		return someoneToDisplay;
-	}// end isSomeoneToDisplay
+	    try (RandomAccessFile input = new RandomAccessFile("employees.dat", "r")) {
+	        for (long currentByte = 0; currentByte != input.length(); currentByte += RandomAccessEmployeeRecord.SIZE) {
+	            input.seek(currentByte);
+	            RandomAccessEmployeeRecord record = new RandomAccessEmployeeRecord();
+	            record.read(input);
+	            if (record.getEmployeeId() > 0) {
+	                return true;
+	            }
+	        }
+	    } catch (IOException e) {
+	        // handle the exception
+	    }
+	    return false;
+	}
 }// end class RandomFile
