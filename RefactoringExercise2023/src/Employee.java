@@ -104,17 +104,25 @@ public class Employee{
 	public void setFullTime(boolean fullTime) {
 		this.fullTime = fullTime;
 	}
-
+	
 	// Display Employee details
 	public String toString() {
-		String bool = "";
+	    StringBuilder sb = new StringBuilder();
+	    String bool = "";
 		if (fullTime)
 			bool = "Yes";
 		else
 			bool = "No";
 
-		return "Employee ID: " + this.employeeId + "\nPPS Number: " + this.pps + "\nSurname: " + this.surname
-				+ "\nFirst Name: " + this.firstName + "\nGender: " + this.gender + "\nDepartment: " + this.department + "\nSalary: " + this.salary
-				+ "\nFull Time: " + bool;
-	}// end toString
+	    sb.append("Employee ID: ").append(employeeId)
+	      .append("\nPPS Number: ").append(pps)
+	      .append("\nSurname: ").append(surname)
+	      .append("\nFirst Name: ").append(firstName)
+	      .append("\nGender: ").append(gender)
+	      .append("\nDepartment: ").append(department)
+	      .append("\nSalary: ").append(salary)
+	      .append("\nFull Time: ").append(bool);
+
+	    return sb.toString();
+	}
 }// end class Employee
