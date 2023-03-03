@@ -1,3 +1,5 @@
+import java.util.Vector;
+
 /*
  * 
  * This is the definition of the Employee object
@@ -124,5 +126,18 @@ public class Employee{
 	      .append("\nFull Time: ").append(bool);
 
 	    return sb.toString();
+	}
+	
+	public Vector<Object> toVector() {
+		Vector<Object> v = new Vector<Object>();
+		v.add(this.employeeId);
+		v.add(this.pps);
+		v.add(this.surname);
+		v.add(this.firstName);
+		v.add(this.gender);
+		v.add(this.department);
+		v.add(this.salary);
+		v.add(this.fullTime);
+		return v;
 	}
 }// end class Employee
