@@ -11,6 +11,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.Vector;
 
 import javax.swing.BorderFactory;
@@ -46,71 +47,102 @@ public class EmployeeSummaryDialog extends JDialog implements ActionListener {
 		setVisible(true);
 
 	}
-	// initialise container
+	
+	private JScrollPane createScrollPane(JTable table) {
+	    JScrollPane scrollPane = new JScrollPane(table);
+	    scrollPane.setEnabled(false);
+	    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+	    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    return scrollPane;
+	}
+	
+	//initialise container
 	public Container summaryPane() {
-		JPanel summaryDialog = new JPanel(new MigLayout());
-		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-		JTable employeeTable;
-		DefaultTableModel tableModel;
-		// column center alignment
-		DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-		// column left alignment 
-		DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
-		Vector<String> header = new Vector<String>();
+	    JPanel summaryDialog = new JPanel(new MigLayout());
+	    JPanel buttonPanel = createButtonPanel();
+	    JTable employeeTable = createEmployeeTable();
+	    JScrollPane scrollPane = createScrollPane(employeeTable);
+
+	    summaryDialog.add(buttonPanel, "growx, pushx, wrap");
+	    summaryDialog.add(scrollPane, "growx, pushx, wrap");
+	    scrollPane.setBorder(BorderFactory.createTitledBorder("Employee Details"));
+
+	    return summaryDialog;
+	}
+
+	private JPanel createButtonPanel() {
+	    JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+	    JButton back = new JButton("Back");
+	    back.addActionListener(this);
+	    back.setToolTipText("Return to main screen");
+	    buttonPanel.add(back);
+	    return buttonPanel;
+	}
+
+	private JTable createEmployeeTable() {
+	    Vector<String> header = createTableHeaders();
+	    int[] colWidth = createColumnWidths();
+	    DefaultTableCellRenderer centerRenderer = createCenterRenderer();
+	    DefaultTableCellRenderer leftRenderer = createLeftRenderer();
+	    DefaultTableModel tableModel = createTableModel(header);
+	    JTable employeeTable = new JTable(tableModel);
+	    setColumnWidths(employeeTable, header, colWidth);
+	    return employeeTable;
+	}
+
+	private Vector<String> createTableHeaders() {
 		// header names
-		String[] headerName = { "ID", "PPS Number", "Surname", "First Name", "Gender", "Department", "Salary",
-				"Full Time" };
+	    String[] headerName = {"ID", "PPS Number", "Surname", "First Name", "Gender", "Department", "Salary", "Full Time"};
+	    return new Vector<>(Arrays.asList(headerName));
+	}
+
+	private int[] createColumnWidths() {
 		// column widths
-		int[] colWidth = { 15, 100, 120, 120, 50, 120, 80, 80 };
-		centerRenderer.setHorizontalAlignment(JLabel.CENTER);
-		leftRenderer.setHorizontalAlignment(JLabel.LEFT);
-		// add headers
-		for (int i = 0; i < headerName.length; i++) {
-			header.addElement(headerName[i]);
-		}// end for
-		// construnct table and choose table model for each column
-		tableModel = new DefaultTableModel(this.allEmployees, header) {
-			public Class getColumnClass(int c) {
-				switch (c) {
-				case 0:
-					return Integer.class;
-				case 4:
-					return Character.class;
-				case 6:
-					return Double.class;
-				case 7:
-					return Boolean.class;
-				default:
-					return String.class;
-				}// end switch
+	    return new int[]{15, 100, 120, 120, 50, 120, 80, 80};
+	}
+
+	private DefaultTableCellRenderer createCenterRenderer() {
+		// column center alignment
+	    DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+	    centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+	    return centerRenderer;
+	}
+
+	private DefaultTableCellRenderer createLeftRenderer() {
+		// column left alignment 
+	    DefaultTableCellRenderer leftRenderer = new DefaultTableCellRenderer();
+	    leftRenderer.setHorizontalAlignment(JLabel.LEFT);
+	    return leftRenderer;
+	}
+
+	private DefaultTableModel createTableModel(Vector<String> header) {
+		// construct table and choose table model for each column
+	    return new DefaultTableModel() {
+	        @Override
+	        public Class<?> getColumnClass(int columnIndex) {
+	            switch (columnIndex) {
+	                case 0:
+	                    return Integer.class;
+	                case 4:
+	                    return Character.class;
+	                case 6:
+	                    return Double.class;
+	                case 7:
+	                    return Boolean.class;
+	                default:
+	                    return String.class;
+	            }// end switch
 			}// end getColumnClass
-		};
+	    };
+	}
 
-		employeeTable = new JTable(tableModel);
-		// add header names to table
-		for (int i = 0; i < employeeTable.getColumnCount(); i++) {
-			employeeTable.getColumn(headerName[i]).setMinWidth(colWidth[i]);
-		}// end for
-		// set alignments
-		employeeTable.getColumnModel().getColumn(0).setCellRenderer(leftRenderer);
-		employeeTable.getColumnModel().getColumn(4).setCellRenderer(centerRenderer);
-		employeeTable.getColumnModel().getColumn(6).setCellRenderer(new DecimalFormatRenderer());
 
-		employeeTable.setEnabled(false);
-		employeeTable.setPreferredScrollableViewportSize(new Dimension(800, (15 * employeeTable.getRowCount() + 15)));
-		employeeTable.setAutoCreateRowSorter(true);
-		JScrollPane scrollPane = new JScrollPane(employeeTable);
-
-		buttonPanel.add(back = new JButton("Back"));
-		back.addActionListener(this);
-		back.setToolTipText("Return to main screen");
-		
-		summaryDialog.add(buttonPanel,"growx, pushx, wrap");
-		summaryDialog.add(scrollPane,"growx, pushx, wrap");
-		scrollPane.setBorder(BorderFactory.createTitledBorder("Employee Details"));
-		
-		return summaryDialog;
-	}// end summaryPane
+	private void setColumnWidths(JTable employeeTable, Vector<String> header, int[] colWidth) {
+		// add headers
+		for (int i = 0; i < header.size(); i++) {
+	        employeeTable.getColumn(header.get(i)).setMinWidth(colWidth[i]);
+		}
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == back){
