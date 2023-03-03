@@ -916,44 +916,35 @@ public class EmployeeDetails extends JFrame implements ActionListener, ItemListe
 		} // end if
 		changesMade = false;
 	}// end saveFileAs
-
+	
 	// allow to save changes to file when exiting the application
 	private void exitApp() {
-		// if file is not empty allow to save changes
-		if (file.length() != 0) {
-			if (changesMade) {
-				int returnVal = JOptionPane.showOptionDialog(frame, "Do you want to save changes?", "Save",
-						JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
-				// if user chooses to save file, save file
-				if (returnVal == JOptionPane.YES_OPTION) {
-					saveFile();// save file
-					// delete generated file if user saved details to other file
-					if (file.getName().equals(generatedFileName))
-						file.delete();// delete file
-					System.exit(0);// exit application
-				} // end if
-					// else exit application
-				else if (returnVal == JOptionPane.NO_OPTION) {
-					// delete generated file if user chooses not to save file
-					if (file.getName().equals(generatedFileName))
-						file.delete();// delete file
-					System.exit(0);// exit application
-				} // end else if
-			} // end if
-			else {
-				// delete generated file if user chooses not to save file
-				if (file.getName().equals(generatedFileName))
-					file.delete();// delete file
-				System.exit(0);// exit application
-			} // end else
-				// else exit application
-		} else {
-			// delete generated file if user chooses not to save file
-			if (file.getName().equals(generatedFileName))
-				file.delete();// delete file
-			System.exit(0);// exit application
-		} // end else
-	}// end exitApp
+	    int returnVal = JOptionPane.YES_OPTION;
+
+	    // check if changes were made and prompt user to save file
+	    if (changesMade && file.length() != 0) {
+	        returnVal = JOptionPane.showOptionDialog(frame, "Do you want to save changes?", "Save",
+	                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE, null, null, null);
+	    }
+
+	    // if user chooses to save file, save file
+	    if (returnVal == JOptionPane.YES_OPTION) {
+	        saveFile();// save file
+	        // delete generated file if user saved details to other file
+	        if (file.getName().equals(generatedFileName)) {
+	            file.delete();// delete file
+	        }
+	        System.exit(0);// exit application
+	    }
+	    // if user chooses not to save file or cancels save dialog, exit application
+	    else if (returnVal == JOptionPane.NO_OPTION || returnVal == JOptionPane.CANCEL_OPTION) {
+	        // delete generated file if user chooses not to save file
+	        if (file.getName().equals(generatedFileName)) {
+	            file.delete();// delete file
+	        }
+	        System.exit(0);// exit application
+	    }
+	}
 
 	// generate 20 character long file name
 	private String getFileName() {
