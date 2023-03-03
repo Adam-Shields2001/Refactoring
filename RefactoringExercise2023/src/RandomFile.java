@@ -17,28 +17,16 @@ public class RandomFile {
 
 	// Create new file
 	public void createFile(String fileName) {
-		RandomAccessFile file = null;
 
 		try // open file for reading and writing
 		{
-			file = new RandomAccessFile(fileName, "rw");
+			RandomAccessFile file = new RandomAccessFile(fileName, "rw");
 
 		} // end try
 		catch (IOException ioException) {
 			JOptionPane.showMessageDialog(null, "Error processing file!");
 			System.exit(1);
 		} // end catch
-
-		finally {
-			try {
-				if (file != null)
-					file.close(); // close file
-			} // end try
-			catch (IOException ioException) {
-				JOptionPane.showMessageDialog(null, "Error closing file!");
-				System.exit(1);
-			} // end catch
-		} // end finally
 	} // end createFile
 
 	// Open file for adding or changing records
